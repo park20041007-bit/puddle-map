@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>물고임 지도 (시범 - Leaflet)</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+        "Apple SD Gothic Neo", "맑은 고딕", sans-serif;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+    .panel {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+      padding: 14px 18px;
+      font-size: 13px;
+      z-index: 1000;
+    }
+    .panel-left {
+      top: 14px;
+      left: 14px;
+      max-width: 260px;
+    }
+    .panel-right {
+      right: 14px;
+      bottom: 14px;
+      max-width: 260px;
+    }
+    .panel-left h1 {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+    .panel-left .subtitle {
+      margin: 0 0 10px 0;
+      font-size: 11px;
+      color: #777;
+    }
+    .legend {
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+      margin: 6px 0 8px 0;
+    }
+    .legend-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 2px 0;
+      font-size: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      border: 1px solid #fff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+    .dot-green { background: #2ecc71; }
+    .dot-yellow { background: #f1c40f; }
+    .dot-red { background: #e74c3c; }
+
+    .desc {
+      font-size: 11px;
+      color: #666;
+    }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+    .btn.primary {
+      background: #2e86de;
+      color: #fff;
+    }
+    .btn.primary:hover {
+      background: #1b69b6;
+    }
+    .btn.secondary {
+      background: #f5f6fa;
+      color: #444;
+    }
+    .btn.secondary:hover {
+      background: #eaecef;
+    }
+    .hint {
+      font-size: 10px;
+      color: #888;
+      margin: 4px 0 0 0;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- 왼쪽 위 정보 패널 -->
+  <div class="panel panel-left">
+    <h1>대전 유성구<br>물고임 지도(시범)</h1>
+    <p class="subtitle">충남대학교 정문 일대 · 테스트 버전</p>
+
+    <div class="legend">
+      <div class="legend-title">위험 등급</div>
+      <div class="legend-item">
+        <span class="dot dot-green"></span>
+        <span>녹색: 관찰 필요</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot dot-yellow"></span>
+        <span>노란색: 우선 개선</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot dot-red"></span>
+        <span>빨간색: 최우선 개선</span>
+      </div>
+    </div>
+
+    <div class="desc">
+      · 마커를 클릭하면 <strong>예시 지점 정보</strong>가 나타납니다.<br>
+      · 실제 데이터가 아니라 <strong>프로토타입 화면</strong>입니다.
+    </div>
+  </div>
+
+  <!-- 오른쪽 아래 제보/문의 패널 -->
+  <div class="panel panel-right">
+    <button class="btn primary" onclick="openReportForm()">
+      사진 찍어서 제보하기
+    </button>
+    <button class="btn secondary" onclick="openContact()">
+      담당자에게 문의하기
+    </button>
+    <p class="hint">
+      * 제보하기 버튼은 구글폼 또는 학교 설문 링크에 연결할 수 있습니다.<br>
+      * 문의하기는 학과·팀 이메일 등으로 연결합니다.
+    </p>
+  </div>
+
+  <!-- Leaflet JS -->
+   <!-- Leaflet JS -->
+    <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // 1. 지도 기본 설정 (충남대 정문 근처 좌표)
+    var map = L.map('map').setView([36.3660, 127.3445], 16);
+
+    // 2. 타일 레이어 (OpenStreetMap 사용)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. 실제 현장 물고임 지점 데이터 (1개)
+    var puddles = [
+      {
+        id: 1,
+        name: "무모한초밥 앞 물 웅덩이",
+        lat: 36.357698,       // 위도
+        lng: 127.342688,      // 경도
+        severity: "green",    // 핀 색상: green / yellow / red
+
+        // 현장 기록값
+        pond_width_m: 8.15,   // 웅덩이 가로 길이 (m)
+        pond_length_m: 3.66,  // 웅덩이 세로 길이 (m)
+        depth_cm: 8,          // 수심 (cm)
+
+        note: "보도 전체 폭에 가까운 물고임이 형성되어 보행자가 우회해야 하는 지점.",
+        photo: "photos/puddle_1.jpg"  // 사진 파일 경로
+      }
+    ];
+
+    function getColor(sev) {
+      if (sev === "red") return "#e74c3c";
+      if (sev === "yellow") return "#f1c40f";
+      return "#2ecc71"; // green
+    }
+
+    // 4. 마커 + 팝업 생성
+    puddles.forEach(function (p) {
+      var marker = L.circleMarker([p.lat, p.lng], {
+        radius: 8,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: getColor(p.severity),
+        fillOpacity: 1
+      }).addTo(map);
+
+      var severityLabel =
+        p.severity === "red" ? "최우선 개선" :
+        p.severity === "yellow" ? "우선 개선" : "관찰 필요";
+
+      var popupHtml =
+        '<div style="font-size:12px; max-width:230px;">' +
+          '<strong>' + p.name + '</strong><br/>' +
+          '위험 등급: <b>' + severityLabel + '</b><br/>' +
+          '웅덩이 크기: ' + p.pond_width_m + ' m × ' + p.pond_length_m + ' m<br/>' +
+          '수심: ' + p.depth_cm + ' cm<br/>' +
+          '<div style="margin-top:4px; color:#555;">' + p.note + '</div>';
+
+      if (p.photo) {
+        popupHtml +=
+          '<div style="margin-top:6px;">' +
+            '<img src="' + p.photo + '" ' +
+                 'style="width:100%; border-radius:6px; border:1px solid #ddd;" />' +
+          '</div>';
+      }
+
+      popupHtml += '</div>';
+
+      marker.bindPopup(popupHtml);
+    });
+
+    // 제보하기: 구글폼 링크로 연결
+    function openReportForm() {
+      var url = "https://forms.gle/여기에_구글폼_URL"; // 실제 폼 URL로 교체
+      window.open(url, "_blank");
+    }
+
+    // 문의하기: 이메일 열기
+    function openContact() {
+      var email = "team.puddle@cnu.ac.kr"; // 팀 이메일로 교체
+      var subject = encodeURIComponent("[물고임 지도] 문의 드립니다.");
+      var body = encodeURIComponent("내용을 입력해 주세요.");
+      window.location.href = "mailto:" + email +
+        "?subject=" + subject +
+        "&body=" + body;
+    }
+  </script>
+</body>
+</html>
+
+    // 1. 지도 기본 설정 (충남대 정문 근처 좌표)
+    var map = L.map('map').setView([36.3660, 127.3445], 16);
+
+    // 2. 타일 레이어 (OpenStreetMap 사용)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. 예시 물고임 지점 데이터 (마커 3개)
+       // 3. 실제 현장 물고임 지점 데이터 (1개)
+    var puddles = [
+      {
+        id: 1,
+        name: "무모한 초밥 앞 물 웅덩이"
+        lat: 36.357698,       // 위도
+        lng: 127.342688,      // 경도
+        severity: "red",    // 핀 색상: green / yellow / red
+
+        // 현장 기록값
+        pond_width_m: 8.15,   // 웅덩이 가로 길이 (m)
+        pond_length_m: 3.66,  // 웅덩이 세로 길이 (m)
+        depth_cm: 8,          // 수심 (cm)
+
+        note: "보도 전체 폭에 가까운 물고임이 형성되어 보행자가 우회해야 하는 지점.",
+        photo: "photos/puddle_1.jpg"  // 사진 파일 경로
+      }
+    ];
+      {
+        id: 2,
+        name: "놀숲 앞 보도",
+        lat: 36.3659,
+        lng: 127.3440,
+        severity: "yellow",
+        width_m: 1.3,
+        depth_cm: 3,
+        note: "점자블록 근처에 얕은 물고임이 생기는 구간(예시)."
+      },
+      {
+        id: 3,
+        name: "이피아커피 옆 골목",
+        lat: 36.3658,
+        lng: 127.3450,
+        severity: "green",
+        width_m: 1.6,
+        depth_cm: 1,
+        note: "현재는 큰 문제는 없으나 우천 시 관찰이 필요한 구간(예시)."
+      }
+    ];
+
+    function getColor(sev) {
+      if (sev === "red") return "#e74c3c";
+      if (sev === "yellow") return "#f1c40f";
+      return "#2ecc71";
+    }
+       puddles.forEach(function (p) {
+      var marker = L.circleMarker([p.lat, p.lng], {
+        radius: 8,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: getColor(p.severity),
+        fillOpacity: 1
+      }).addTo(map);
+
+      var severityLabel =
+        p.severity === "red" ? "최우선 개선" :
+        p.severity === "yellow" ? "우선 개선" : "관찰 필요";
+
+      var popupHtml =
+        '<div style="font-size:12px; max-width:230px;">' +
+          '<strong>' + p.name + '</strong><br/>' +
+          '위험 등급: <b>' + severityLabel + '</b><br/>' +
+          '웅덩이 크기: ' + p.pond_width_m + ' m × ' + p.pond_length_m + ' m<br/>' +
+          '수심: ' + p.depth_cm + ' cm<br/>' +
+          '<div style="margin-top:4px; color:#555;">' + p.note + '</div>';
+
+      if (p.photo) {
+        popupHtml +=
+          '<div style="margin-top:6px;">' +
+            '<img src="' + p.photo + '" ' +
+                 'style="width:100%; border-radius:6px; border:1px solid #ddd;" />' +
+          '</div>';
+      }
+
+      popupHtml += '</div>';
+
+      marker.bindPopup(popupHtml);
+    });
+
+    // 제보하기: 구글폼 링크로 연결
+    function openReportForm() {
+      var url = "https://forms.gle/여기에_구글폼_URL"; // 실제 폼 URL로 교체
+      window.open(url, "_blank");
+    }
+
+    // 문의하기: 이메일 열기
+    function openContact() {
+      var email = "team.puddle@cnu.ac.kr"; // 팀 이메일로 교체
+      var subject = encodeURIComponent("[물고임 지도] 문의 드립니다.");
+      var body = encodeURIComponent("내용을 입력해 주세요.");
+      window.location.href = "mailto:" + email +
+        "?subject=" + subject +
+        "&body=" + body;
+    }
+  </script>
+</body>
+</html>
