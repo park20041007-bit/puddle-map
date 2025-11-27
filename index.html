@@ -150,17 +150,23 @@
 
   <!-- 오른쪽 아래 제보/문의 패널 -->
   <div class="panel panel-right">
-    <button class="btn primary" onclick="openReportForm()">
-      사진 찍어서 제보하기
-    </button>
-    <button class="btn secondary" onclick="openContact()">
-      담당자에게 문의하기
-    </button>
-    <p class="hint">
-      * 제보하기 버튼은 구글폼 또는 학교 설문 링크에 연결할 수 있습니다.<br>
-      * 문의하기는 학과·팀 이메일 등으로 연결합니다.
-    </p>
-  </div>
+  <a
+    href="https://docs.google.com/forms/d/e/1FAIpQLSfvimfliYduITaQSWFbSHtYwMRCicafjd5T5TTL2191_UZPWg/viewform?usp=header"
+    target="_blank"
+    class="btn primary"
+    style="display:block; text-align:center; text-decoration:none;"
+  >
+    사진 찍어서 제보하기
+  </a>
+
+  <button class="btn secondary" onclick="openContact()">
+    담당자에게 문의하기
+  </button>
+  <p class="hint">
+    * 제보하기 버튼은 구글폼 또는 학교 설문 링크에 연결할 수 있습니다.<br>
+    * 문의하기는 학과·팀 이메일 등으로 연결합니다.
+  </p>
+</div>
 
   <!-- Leaflet JS -->
   <script
