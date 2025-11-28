@@ -185,22 +185,167 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3. 실제 현장 물고임 지점 데이터 (예시 1개)
-    var puddles = [
-      {
-        id: 1,
-        name: "무모한초밥 앞 물 웅덩이",
-        lat: 36.357698,       // 위도
-        lng: 127.342688,      // 경도
-        severity: "green",    // green / yellow / red
-        pond_width_m: 8.15,   // 웅덩이 가로 길이 (m)
-        pond_length_m: 3.66,  // 웅덩이 세로 길이 (m)
-        depth_cm: 8,          // 수심 (cm)
-        note: "보도 전체 폭에 가까운 물고임이 형성되어 보행자가 우회해야 하는 지점.",
-        photo: "photos/puddle_1.jpg"  // 사진 파일 경로
-      }
-    ];
-
+  // 3. 실제 현장 물고임 지점 데이터
+var puddles = [
+  {
+    id: 1,
+    name: "무모한초밥 앞 물 웅덩이",
+    lat: 36.357698,
+    lng: 127.342688,
+    severity: "green",
+    pond_width_m: 8.15,
+    pond_length_m: 3.66,
+    depth_cm: 8,
+    note: "보도 전체 폭에 가까운 물고임이 형성되어 보행자가 우회해야 하는 지점.",
+    photo: [
+      "photos/puddle_1_1.jpg",
+      "photos/puddle_1_2_축소.jpg"
+    ]
+  },
+  {
+    id: 2,
+    name: "심청아 배고파 앞",
+    lat: 36.358034,
+    lng: 127.342882,
+    severity: "red",
+    pond_width_m: 4.5,
+    pond_length_m: 4.5,
+    depth_cm: 2,
+    note: "가게 앞 전체 통행 불편",
+    photo: [
+      "photos/puddle_2_1.jpg",
+      "photos/puddle_2_2.jpg"
+    ]
+  },
+  {
+    id: 3,
+    name: "세븐일레븐 앞 횡단보도",
+    lat: 36.358643,
+    lng: 127.343072,
+    severity: "red",
+    pond_width_m: 4.6,
+    pond_length_m: 2.54,
+    depth_cm: 3,
+    note: "횡단보도 중 웅덩이로 사고 위험 높음",
+    photo: [
+      "photos/puddle_3_1.jpg",
+      "photos/puddle_3_2.jpg"
+    ]
+  },
+  {
+    id: 4,
+    name: "아랑횟집 앞",
+    lat: 36.359201,
+    lng: 127.344229,
+    severity: "yellow",
+    pond_width_m: 1.4,
+    pond_length_m: 1.2,
+    depth_cm: 4,
+    note: "전체 길 폭 2.6m 중 길 가운데에 웅덩이로 휠체어 최소 폭 확보 불가",
+    photo: [
+      "photos/puddle_4_1_축소.jpg"
+    ]
+  },
+  {
+    id: 5,
+    name: "아랑횟집 뒤",
+    lat: 36.359188,
+    lng: 127.344368,
+    severity: "green",
+    pond_width_m: 1.1,
+    pond_length_m: 1.3,
+    depth_cm: 3,
+    note: "전체 길 폭 2.6m 중 길 가운데에 하수구 단차로 인한 웅덩이 형성, 휠체어 최소 폭 확보 불가",
+    photo: [
+      "photos/puddle_5_1_축소.jpg"
+    ]
+  },
+  {
+    id: 6,
+    name: "불이야 앞",
+    lat: 36.359025,
+    lng: 127.345156,
+    severity: "green",
+    pond_width_m: 1.1,
+    pond_length_m: 0.75,
+    depth_cm: 3,
+    note: "전체 길 폭 2.6m 중 길 가운데에 웅덩이로 휠체어 최소 폭 확보 불가",
+    photo: [
+      "photos/puddle_6_1_축소.jpg"
+    ]
+  },
+  {
+    id: 7,
+    name: "상하이 앞",
+    lat: 36.359042,
+    lng: 127.345514,
+    severity: "red",
+    pond_width_m: 0.8,
+    pond_length_m: 1.2,
+    depth_cm: 5,
+    note: "전체 길 폭 2.6m 중 길 가운데에 상대적으로 깊은 웅덩이로 비 그친 뒤에도 물고임 지속 우려, 휠체어 최소 폭 확보 불가",
+    photo: [
+      "photos/puddle_7_1.jpg"
+    ]
+  },
+  {
+    id: 8,
+    name: "동큐칼국수 앞",
+    lat: 36.360731,
+    lng: 127.341957,
+    severity: "yellow",
+    pond_width_m: 0.54,
+    pond_length_m: 0.63,
+    depth_cm: 5,
+    note: "전체 길 폭 4.4m, 배수구 바로 옆이지만 웅덩이가 깊고 단차까지 존재하여 배수불량 발생, 유사한 웅덩이 2개 존재",
+    photo: [
+      "photos/puddle_8_1.jpg"
+    ]
+  },
+  {
+    id: 9,
+    name: "정통집 맞은편",
+    lat: 36.362703,
+    lng: 127.349753,
+    severity: "green",
+    pond_width_m: 2.34,
+    pond_length_m: 0.5,
+    depth_cm: 3,
+    note: "전체 길 폭 3.8m, 차도와 구분 모호한 구역인데 차 오면 통행 불편",
+    photo: [
+      "photos/puddle_9_1_축소.jpg"
+    ]
+  },
+  {
+    id: 10,
+    name: "아임일리터 앞",
+    lat: 36.361796,
+    lng: 127.350365,
+    severity: "yellow",
+    pond_width_m: 1.38,
+    pond_length_m: 0.47,
+    depth_cm: 4,
+    note: "도로 마모로 인한 웅덩이",
+    photo: [
+      "photos/puddle_10_1.jpg"
+    ]
+  },
+  {
+    id: 11,
+    name: "공5 뒤",
+    lat: 36.36662,
+    lng: 127.344762,
+    severity: "green",
+    pond_width_m: 2.0,
+    pond_length_m: 2.0,
+    depth_cm: 3,
+    note: "단차 때문에 물고임 발생",
+    photo: [
+      "photos/puddle_11_1.jpg"
+    ]
+  }
+];
+    
     function getColor(sev) {
       if (sev === "red") return "#e74c3c";
       if (sev === "yellow") return "#f1c40f";
