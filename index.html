@@ -230,12 +230,23 @@
           '<div style="margin-top:4px; color:#555;">' + p.note + '</div>';
 
       if (p.photo) {
-        popupHtml +=
-          '<div style="margin-top:6px;">' +
-            '<img src="' + p.photo + '" ' +
-                 'style="width:100%; border-radius:6px; border:1px solid #ddd;" />' +
-          '</div>';
-      }
+  // p.photo가 문자열이면 [문자열], 배열이면 그대로 사용
+  var photos = Array.isArray(p.photo) ? p.photo : [p.photo];
+
+  // 두 장까지 양옆으로 배치 (flex 사용)
+  popupHtml += '<div style="margin-top:6px; display:flex; gap:6px;">';
+
+  // 최대 2장까지만 보여주고 싶으면 slice(0, 2)
+  photos.slice(0, 2).forEach(function (src) {
+    popupHtml +=
+      '<div style="flex:1;">' +
+        '<img src="' + src + '" ' +
+             'style="width:100%; height:auto; border-radius:6px; border:1px solid #ddd; display:block;" />' +
+      '</div>';
+  });
+
+  popupHtml += '</div>';
+}
 
       popupHtml += '</div>';
 
