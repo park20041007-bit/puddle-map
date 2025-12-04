@@ -165,6 +165,17 @@
     </div>
   </div>
 
+/* 팝업창 스타일 개선 */
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      padding: 0; /* 여백 제거하고 내부에서 조절 */
+    }
+    .leaflet-popup-content {
+      margin: 14px;
+      line-height: 1.5;
+    }
+  
+  
   <!-- 오른쪽 아래 제보/문의 패널 -->
   <div class="panel panel-right">
   <a
@@ -369,7 +380,7 @@ var puddles = [
       return "#2ecc71"; // green
     }
 
-    // 4. 마커 + 팝업 생성
+   // 4. 마커 + 팝업 생성
     puddles.forEach(function (p) {
       var marker = L.circleMarker([p.lat, p.lng], {
         radius: 8,
@@ -379,17 +390,54 @@ var puddles = [
         fillOpacity: 1
       }).addTo(map);
 
+      // 위험 등급 텍스트
       var severityLabel =
         p.severity === "red" ? "최우선 개선" :
         p.severity === "yellow" ? "우선 개선" : "관찰 필요";
 
+      // 사진 개수 확인 (배열이면 길이, 아니면 1장으로 간주)
+      var photoCount = 0;
+      if (p.photo) {
+        photoCount = Array.isArray(p.photo) ? p.photo.length : 1;
+      }
+
+      // 사진이 2장 이상이면 너비를 넓게(460px), 아니면 적당히 넓게(300px) 설정
+      var popupWidth = photoCount >= 2 ? 460 : 300;
+
+      // 팝업 HTML 구성
       var popupHtml =
-        '<div style="font-size:12px; max-width:230px;">' +
-          '<strong>' + p.name + '</strong><br/>' +
-          '위험 등급: <b>' + severityLabel + '</b><br/>' +
-          '웅덩이 크기: ' + p.pond_width_m + ' m × ' + p.pond_length_m + ' m<br/>' +
-          '수심: ' + p.depth_cm + ' cm<br/>' +
-          '<div style="margin-top:4px; color:#555;">' + p.note + '</div>';
+        '<div style="width:' + popupWidth + 'px; font-size:13px;">' +
+          '<h3 style="margin:0 0 6px 0; font-size:16px;">' + p.name + '</h3>' +
+          '<div>위험 등급: <b>' + severityLabel + '</b></div>' +
+          '<div>웅덩이 크기: ' + p.pond_width_m + 'm × ' + p.pond_length_m + 'm</div>' +
+          '<div>수심: ' + p.depth_cm + 'cm</div>' +
+          '<div style="margin-top:8px; color:#444; background:#f5f6fa; padding:8px; border-radius:6px;">' + 
+             p.note + 
+          '</div>';
+
+      // 사진 추가 로직
+      if (p.photo) {
+        var photos = Array.isArray(p.photo) ? p.photo : [p.photo];
+        
+        // 사진 영역 시작
+        popupHtml += '<div style="margin-top:10px; display:flex; gap:8px;">';
+
+        // 최대 2장까지만 표시
+        photos.slice(0, 2).forEach(function (src) {
+          popupHtml +=
+            '<div style="flex:1;">' +
+              '<img src="' + src + '" ' +
+                   'style="width:100%; height:auto; border-radius:8px; border:1px solid #eee; display:block; object-fit:cover; aspect-ratio: 4/3;" />' +
+            '</div>';
+        });
+
+        popupHtml += '</div>';
+      }
+      popupHtml += '</div>';
+
+      // bindPopup 옵션에 maxWidth를 넉넉하게(600) 주어 우리가 설정한 width가 잘리거나 줄어들지 않게 함
+      marker.bindPopup(popupHtml, { maxWidth: 600 });
+    });
 
       if (p.photo) {
   // p.photo가 문자열이면 [문자열], 배열이면 그대로 사용
