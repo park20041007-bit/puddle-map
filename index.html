@@ -120,7 +120,7 @@
       line-height: 1.4;
     }
 
-    /* 팝업창 스타일 개선 (HTML 본문에 있던 것 이동함) */
+    /* 팝업창 스타일 개선 */
     .leaflet-popup-content-wrapper {
       border-radius: 12px;
       padding: 0;
@@ -203,7 +203,7 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3. 실제 현장 물고임 지점 데이터
+    // 3. 실제 현장 물고임 지점 데이터 (파일명 캡처본 기준 수정 완료)
     var puddles = [
       {
         id: 1,
@@ -315,7 +315,7 @@
         pond_width_m: 0.54,
         pond_length_m: 0.63,
         depth_cm: 5,
-        note: "전체 길 폭 4.4m, 배수구 바로 옆이지만 웅덩이가 깊고 단차까지 존재하여 배수불량 발생, 유사한 웅덩이 2개 존재",
+        note: "전체 길 폭 4.4m, 배수구 바로 옆이지만 웅덩이가 깊고 단차까지 존재하여 배수불량 발생",
         photo: [
           "puddle_8_1.jpg"
         ]
@@ -370,7 +370,7 @@
       return "#2ecc71"; // green
     }
 
-    // 4. 마커 + 팝업 생성 (여기가 중복되어 오류가 났던 부분입니다. 깔끔하게 정리했습니다.)
+    // 4. 마커 + 팝업 생성
     puddles.forEach(function (p) {
       var marker = L.circleMarker([p.lat, p.lng], {
         radius: 8,
@@ -380,21 +380,17 @@
         fillOpacity: 1
       }).addTo(map);
 
-      // 위험 등급 텍스트
       var severityLabel =
         p.severity === "red" ? "최우선 개선" :
         p.severity === "yellow" ? "우선 개선" : "관찰 필요";
 
-      // 사진 개수 확인 (배열이면 길이, 아니면 1장으로 간주)
       var photoCount = 0;
       if (p.photo) {
         photoCount = Array.isArray(p.photo) ? p.photo.length : 1;
       }
 
-      // 사진이 2장 이상이면 너비를 넓게(460px), 아니면 적당히 넓게(300px) 설정
       var popupWidth = photoCount >= 2 ? 460 : 300;
 
-      // 팝업 HTML 구성
       var popupHtml =
         '<div style="width:' + popupWidth + 'px; font-size:13px;">' +
           '<h3 style="margin:0 0 6px 0; font-size:16px;">' + p.name + '</h3>' +
@@ -405,14 +401,11 @@
              p.note + 
           '</div>';
 
-      // 사진 추가 로직
       if (p.photo) {
         var photos = Array.isArray(p.photo) ? p.photo : [p.photo];
         
-        // 사진 영역 시작
         popupHtml += '<div style="margin-top:10px; display:flex; gap:8px;">';
 
-        // 최대 2장까지만 표시
         photos.slice(0, 2).forEach(function (src) {
           popupHtml +=
             '<div style="flex:1;">' +
@@ -425,19 +418,16 @@
       }
       popupHtml += '</div>';
 
-      // bindPopup 옵션에 maxWidth를 넉넉하게(600) 주어 우리가 설정한 width가 잘리거나 줄어들지 않게 함
       marker.bindPopup(popupHtml, { maxWidth: 600 });
     });
 
-    // 제보하기: 구글폼 링크로 연결
     function openReportForm() {
       var url = "https://docs.google.com/forms/d/e/1FAIpQLSfvimfliYduITaQSWFbSHtYwMRCicafjd5T5TTL2191_UZPWg/viewform?usp=header";
       window.open(url, "_blank");
     }
 
-    // 문의하기: 이메일 열기
     function openContact() {
-      var email = "team.puddle@cnu.ac.kr"; // 팀 이메일로 교체
+      var email = "team.puddle@cnu.ac.kr";
       var subject = encodeURIComponent("[물고임 지도] 문의 드립니다.");
       var body = encodeURIComponent("내용을 입력해 주세요.");
       window.location.href = "mailto:" + email +
