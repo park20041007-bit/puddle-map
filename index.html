@@ -65,19 +65,28 @@
       margin-bottom: 4px;
       font-size: 12px;
     }
+   /* 기존 .legend-item 부분을 아래로 교체 */
     .legend-item {
       display: flex;
-      align-items: center;
-      margin: 2px 0;
+      align-items: flex-start; /* 텍스트가 여러 줄일 때 위쪽 정렬 */
+      margin: 6px 0;          /* 항목 간 간격을 조금 넓힘 */
       font-size: 12px;
+      line-height: 1.4;       /* 줄 간격을 줘서 읽기 편하게 함 */
+      word-break: keep-all;   /* 한글 단어 중간 끊김 방지 */
     }
+
+    /* 기존 .dot 부분에 flex-shrink와 margin-top 추가 */
     .dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      margin-right: 6px;
+      margin-right: 8px;      /* 간격 살짝 넓힘 */
       border: 1px solid #fff;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+      
+      /* 아래 두 줄 추가/수정 중요 */
+      flex-shrink: 0;  /* 텍스트가 길어져도 점이 찌그러지지 않게 함 */
+      margin-top: 4px; /* 텍스트 첫 줄과 높이를 맞춤 */
     }
     .dot-green { background: #2ecc71; }
     .dot-yellow { background: #f1c40f; }
@@ -126,22 +135,30 @@
     <h1>대전 유성구<br>물고임 지도(시범)</h1>
     <p class="subtitle">충남대학교 정문 일대 · 테스트 버전</p>
 
-    <div class="legend">
-      <div class="legend-title">위험 등급</div>
+  <div class="legend">
+      <div class="legend-title">위험 등급 기준</div>
+      
       <div class="legend-item">
         <span class="dot dot-green"></span>
-        <span>녹색: 관찰 필요</span>
+        <span>
+          <strong>녹색 (양호):</strong> 물고임이 있지만 보행 폭이 1.5m 이상 확보되어 통행에 지장이 적은 곳.
+        </span>
       </div>
+      
       <div class="legend-item">
         <span class="dot dot-yellow"></span>
-        <span>노란색: 우선 개선</span>
+        <span>
+          <strong>노란색 (주의):</strong> 보행 폭 1.2~1.5m 수준, 신발이 젖을 정도의 불편함이 있어 주의가 필요한 곳.
+        </span>
       </div>
+      
       <div class="legend-item">
         <span class="dot dot-red"></span>
-        <span>빨간색: 최우선 개선</span>
+        <span>
+          <strong>빨간색 (위험):</strong> 보행 유효 폭이 1.2m 미만으로 줄어들어 휠체어 통행이 불가능하거나, 수심이 깊어(5cm 이상) 우회가 필수적인 곳.
+        </span>
       </div>
     </div>
-
     <div class="desc">
       · 마커를 클릭하면 <strong>예시 지점 정보</strong>가 나타납니다.<br>
       · 실제 데이터가 아니라 <strong>프로토타입 화면</strong>입니다.
